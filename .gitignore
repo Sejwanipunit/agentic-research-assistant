@@ -1,0 +1,33 @@
+# Environment
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data & Outputs
+data/
+*.json
+*.csv
+evaluation/results/
+
+# Logs
+*.log
+langsmith_logs/
