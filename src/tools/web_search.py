@@ -1,13 +1,13 @@
 from tavily import TavilyClient
 from langchain_core.tools import tool
 from src.config import Config
-
+from src.tools.schemas import WebSearchInput
 
 # Initialize Tavily client once at module level (not on every call)
 _client = TavilyClient(api_key=Config.TAVILY_API_KEY)
 
 
-@tool
+@tool(args_schema=WebSearchInput)
 def web_search(query: str) -> str:
     """
     Search the web for current information.

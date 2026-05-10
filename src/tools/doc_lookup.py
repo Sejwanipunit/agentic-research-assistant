@@ -3,8 +3,9 @@ from langchain_core.tools import tool
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.config import Config
+from src.tools.schemas import DocLookupInput 
 
 
 _vectorstore = None
@@ -61,7 +62,7 @@ def build_vectorstore(docs_path: str = "data/docs"):
     )
     return _vectorstore
 
-@tool
+@tool(args_schema=DocLookupInput)
 def doc_lookup(query: str) -> str:
     """
     Search through local documents for relevant information.
