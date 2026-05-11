@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, Response, stream_with_context
+from flask import Flask, render_template, request, Response, stream_with_context, send_file
+import subprocess
 import json
 import sys
 import os
@@ -63,6 +64,26 @@ def clear():
     """Clear conversation memory."""
     agent.clear_memory()
     return {"status": "cleared"}
+
+@app.route("/benchmark")
+def benchmark_dashboard():
+    """Serve the benchmark dashboard image."""
+    dashboard_path = "evaluation/results/dashboard.png"
+
+    if not os.path.exists(dashboard_path):
+        return {"error": "No benchmark results yet. Run evaluation/benchmark.py first."}, 404
+
+    return send_file(dashboard_path, mimetype="image/png")
+
+
+@app.route("/run-benchmark")
+def run_benchmark_route():
+    """Trigger benchmark run from browser."""
+    try:
+        subprocess.Popen(["python", "evaluation/benchmark.py"])
+        return {"status": "Benchmark started. Check terminal for progress."}
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 
 if __name__ == "__main__":
