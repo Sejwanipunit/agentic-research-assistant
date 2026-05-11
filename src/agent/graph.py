@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
 
 from src.agent.state import AgentState
@@ -18,6 +18,7 @@ IMPORTANT RULES:
 - Always use code_executor when asked to run, write, or calculate with code
 - Use doc_lookup for questions about local documents
 - After getting tool results, provide a clear final answer
+- When executing code, ALWAYS show the code you wrote AND the output in your response
 - If no tool is needed, answer directly"""
 
 
@@ -28,9 +29,10 @@ def get_llm(tools: list):
     .bind_tools() tells the model what tools exist and their schemas —
     so it can decide to call them by emitting a tool_call in its response.
     """
-    llm = ChatGoogleGenerativeAI(
-        model=Config.MODEL_NAME,
-        google_api_key=Config.GOOGLE_API_KEY,
+    llm = ChatOpenAI(
+        model="llama3.1-8b",
+        api_key=Config.CEREBRAS_API_KEY,
+        base_url="https://api.cerebras.ai/v1",
         temperature=0,
         streaming=True,
     )

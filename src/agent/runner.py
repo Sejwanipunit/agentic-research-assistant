@@ -60,8 +60,19 @@ class AgentRunner:
                 messages = chunk["reason"].get("messages", [])
                 for msg in messages:
                     if isinstance(msg, AIMessage) and msg.content:
-                        yield msg.content
                         
+                        content = msg.content
+                        if isinstance(content, list):
+                            for block in content:
+                                if isinstance(block, dict)  and block.get("type") == "text":
+                                    yield block["text"]
+                        if isinstance(content, str):   
+                            yield msg.content
+            if "tools" in chunk:
+                messages = chunk["tools"].get("messages", [])
+                for msg in messages:
+                    if hasattr(msg, "content") and msg.content:
+                        yield f"\n\n**Tool Result:**\n{msg.content}\n\n"            
         #Save full response to memory
         final_state = self.graph.invoke(
             self.memory.get_initial_state(user_input)
@@ -78,7 +89,13 @@ class AgentRunner:
         messages = final_state.get("messages", [])
         for msg in reversed(messages):
             if isinstance(msg, AIMessage) and msg.content:
-                return msg.content
+                content = msg.content
+                if isinstance(content, list):
+                    for block in content:
+                        if isinstance(block, dict) and block.get("type") == "text":
+                            return block["text"]
+                elif isinstance(content, str):
+                    return content
         return "No response generated."
 
     def clear_memory(self):

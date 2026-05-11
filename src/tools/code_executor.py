@@ -47,9 +47,10 @@ def code_executor(code: str) -> str:
         #Return stdout if successful, else return stderr
         if result.returncode == 0:
             output = result.stdout.strip()
-            return output if output else "Code executed successfully with no output."
+            output = output if output else "Code executed successfully with no output."
+            return f"Code executed:\n```python\n{code}\n```\nOutput:\n{output}"
         else:
-            return f"Error executing code: {result.stderr.strip()}"
+            return f"Code:\n```python\n{code}\n```\nError:\n{result.stderr.strip()}"
         
     except subprocess.TimeoutExpired:
         return "Error: Code execution timed out."
