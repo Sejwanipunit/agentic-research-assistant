@@ -238,7 +238,11 @@
                             agentDiv.classList.remove('thinking');
                             isFirstChunk = false;
                         }
-                        agentDiv.textContent += data.content;
+                        // Add this check
+                        const content = typeof data.content === 'string' 
+                            ? data.content 
+                            : JSON.stringify(data.content);
+                        agentDiv.textContent += content;
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     }
 

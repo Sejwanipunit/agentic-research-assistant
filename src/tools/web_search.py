@@ -7,7 +7,7 @@ from src.tools.schemas import WebSearchInput
 _client = TavilyClient(api_key=Config.TAVILY_API_KEY)
 
 
-@tool(args_schema=WebSearchInput)
+@tool
 def web_search(query: str) -> str:
     """
     Search the web for current information.

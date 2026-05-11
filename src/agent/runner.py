@@ -66,12 +66,12 @@ class AgentRunner:
         final_state = self.graph.invoke(
             self.memory.get_initial_state(user_input)
         )
-        self.memory.add.ai_message(
+        self.memory.add_ai_message(
             self._extract_response(final_state)
         )
         
-        def _extract_response(self, final_state: dict) -> str:
-            """
+    def _extract_response(self, final_state: dict) -> str:
+        """
         Pulls the last AIMessage content from final state.
         Skips tool messages and intermediate reasoning.
         """

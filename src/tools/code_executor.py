@@ -5,7 +5,7 @@ import os
 from langchain_core.tools import tool
 from src.tools.schemas import CodeExecutorInput
 
-@tool(args_schema=CodeExecutorInput)
+@tool
 def code_executor(code: str) -> str:
     """
     Execute Python code and return the output.

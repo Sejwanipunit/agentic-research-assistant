@@ -1,7 +1,7 @@
 import os
 from langchain_core.tools import tool
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.config import Config
@@ -13,14 +13,13 @@ _vectorstore = None
 def _get_embeddings():
     
     """
-    Returns embeddings model poinitng to xAI.
-    We reuse OpenAIEmbeddings with custom base_url -
-    same trick as ChatOpenAI in graph.py
+    Uses a local HuggingFace model for embeddings.
+    Runs on CPU — no API key needed.
+    Model downloads once (~90MB) and is cached locally.
     """
-    return OpenAIEmbeddings(
-        api_key=Config.XAI_API_KEY,
-        base_url=Config.XAI_BASE_URL,
-        model="v1/embeddings"
+    return HuggingFaceEmbeddings(
+        model_name="all-MiniLM-L6-v2",   # small, fast, good quality
+        model_kwargs={"device": "cpu"}
     )
     
 def build_vectorstore(docs_path: str = "data/docs"):
@@ -62,7 +61,7 @@ def build_vectorstore(docs_path: str = "data/docs"):
     )
     return _vectorstore
 
-@tool(args_schema=DocLookupInput)
+@tool
 def doc_lookup(query: str) -> str:
     """
     Search through local documents for relevant information.

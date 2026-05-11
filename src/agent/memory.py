@@ -27,6 +27,10 @@ class ConversationMemory:
         self.messages.append(AIMessage(content=content))
         self._trim()
         
+    def get_messages(self) -> list:
+        """Returns full conversation history."""
+        return self.messages.copy()    
+        
     def _trim(self):
         """
         Keep only the last max_history messages.

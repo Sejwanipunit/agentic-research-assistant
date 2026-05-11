@@ -1,22 +1,24 @@
 from langgraph.graph import StateGraph, END
-from langraph.prebuilt import ToolNode
-from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import ToolNode
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage
 
 from src.agent.state import AgentState
 from src.config import Config
 
 # ── System prompt ──────────────────────────────────────────────────────────────
-SYSTEM_PROMPT = """You are a research assistant with access to tools.
+SYSTEM_PROMPT = """You are a helpful research assistant with access to these tools:
 
-For every query:
-1. THINK about what information you need
-2. CALL a tool if needed
-3. OBSERVE the result
-4. REPEAT until you have enough to answer
-5. Give a clear, well-structured final answer
+1. web_search(query) - Search the internet for current information
+2. code_executor(code) - Execute Python code and return output
+3. doc_lookup(query) - Search local documents
 
-Be concise in your reasoning. Cite sources when using web search."""
+IMPORTANT RULES:
+- Always use web_search for questions about current events or facts
+- Always use code_executor when asked to run, write, or calculate with code
+- Use doc_lookup for questions about local documents
+- After getting tool results, provide a clear final answer
+- If no tool is needed, answer directly"""
 
 
 # ── LLM setup ──────────────────────────────────────────────────────────────────
@@ -26,11 +28,10 @@ def get_llm(tools: list):
     .bind_tools() tells the model what tools exist and their schemas —
     so it can decide to call them by emitting a tool_call in its response.
     """
-    llm = ChatOpenAI(
+    llm = ChatGoogleGenerativeAI(
         model=Config.MODEL_NAME,
-        api_key=Config.XAI_API_KEY,
-        base_url=Config.XAI_BASE_URL,
-        temperature=0,          # deterministic — important for agents
+        google_api_key=Config.GOOGLE_API_KEY,
+        temperature=0,
         streaming=True,
     )
     return llm.bind_tools(tools)
