@@ -46,6 +46,12 @@ def reason_node(state: AgentState, llm):
     """
     messages = [SystemMessage(content=SYSTEM_PROMPT)] + list(state["messages"])
     response = llm.invoke(messages)
+    
+    if hasattr(response, "tool_calls") and response.tool_calls:
+        for tool_call in response.tool_calls:
+            print(f"🔧 Tool called: {tool_call['name']}")
+            print(f"   Args: {tool_call['args']}")
+            
     return {
         "messages": [response],
         "tool_call_count": state["tool_call_count"]
