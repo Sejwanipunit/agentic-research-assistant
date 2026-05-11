@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
     <title>Agentic Research Assistant</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,6 +35,21 @@
         header span {
             font-size: 12px;
             color: #666;
+        }
+
+        pre {
+            background: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #e0e0e0;
         }
 
         #clear-btn {
@@ -239,10 +255,9 @@
                             isFirstChunk = false;
                         }
                         // Add this check
-                        const content = typeof data.content === 'string' 
-                            ? data.content 
-                            : JSON.stringify(data.content);
-                        agentDiv.textContent += content;
+                        agentDiv.dataset.raw = (agentDiv.dataset.raw || '') + data.content;
+                        // Render as markdown
+                        agentDiv.innerHTML = marked.parse(agentDiv.dataset.raw);
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     }
 

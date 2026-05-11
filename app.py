@@ -36,16 +36,17 @@ def chat():
         try:
             # Stream tokens from agent
             for chunk in agent.stream(user_input):
-                # SSE format — must be exactly this format
                 data = json.dumps({"type": "token", "content": chunk})
                 yield f"data: {data}\n\n"
-
-            # Signal to browser that streaming is done
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
         except Exception as e:
-            error_data = json.dumps({"type": "error", "content": str(e)})
-            yield f"data: {error_data}\n\n"
+            error_msg = str(e)
+            # If rate limited, tell user to wait
+            if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+                yield f"data: {json.dumps({'type': 'error', 'content': 'Rate limit hit — please wait 30 seconds and try again.'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'error', 'content': error_msg})}\n\n"
 
     return Response(
         stream_with_context(generate()),
