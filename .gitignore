@@ -26,7 +26,9 @@ env/
 data/
 *.json
 *.csv
-evaluation/results/
+evaluation/results/*.csv
+
+!evaluation/results/dashboard.png
 
 # Logs
 *.log
