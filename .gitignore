@@ -29,6 +29,7 @@ data/
 evaluation/results/*.csv
 
 !evaluation/results/dashboard.png
+!.env.example
 
 # Logs
 *.log
