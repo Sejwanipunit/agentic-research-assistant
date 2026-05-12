@@ -8,19 +8,21 @@ A production-grade **ReAct agent** built with LangGraph that autonomously orches
 
 ## Architecture
 
-```
-User Query
-    ↓
-[Flask Chat UI] ← SSE Streaming
-    ↓
-[LangGraph ReAct Loop]
-    ↓
-[Reason Node] → Does LLM need a tool?
-    ├── YES → [Tool Node] → Execute Tool → Back to Reason
-    │           ├── web_search    (Tavily API)
-    │           ├── code_executor (sandboxed subprocess)
-    │           └── doc_lookup    (FAISS vector search)
-    └── NO  → [Final Answer] → Stream to UI
+```mermaid
+flowchart TD
+    A["User Query"] --> B["Flask Chat UI"]
+    B -->|"SSE Streaming"| C["LangGraph ReAct Loop"]
+    C --> D["Reason Node\n(LLM thinks)"]
+    D -->|"Needs a tool?"| E{"Decision"}
+    E -->|"YES"| F["Tool Node"]
+    E -->|"NO"| G["Final Answer"]
+    F --> H["web_search\nTavily API"]
+    F --> I["code_executor\nSandboxed subprocess"]
+    F --> J["doc_lookup\nFAISS vector search"]
+    H --> D
+    I --> D
+    J --> D
+    G -->|"Stream tokens"| B
 ```
 
 ---
